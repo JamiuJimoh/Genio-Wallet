@@ -14,7 +14,7 @@ class AppTheme {
     bodyText2: GoogleFonts.nunito(
       fontSize: 15.0,
       fontWeight: FontWeight.w700,
-      color: AppColors.kOnsecondaryColor,
+      color: AppColors.kSubtitleTextColor,
     ),
     subtitle1: GoogleFonts.nunito(
       fontSize: 13.0,
@@ -89,6 +89,21 @@ class AppTheme {
         foregroundColor: AppColors.kPrimaryColor,
         backgroundColor: AppColors.kPrimaryColor,
         elevation: 0.1,
+      ),
+      colorScheme: const ColorScheme(
+        primary: AppColors.kPrimaryColor,
+        background: AppColors.kOnprimaryColor,
+        brightness: Brightness.light,
+        onBackground: AppColors.kOnprimaryColor,
+        secondary: AppColors.kSecondaryColor,
+        surface: AppColors.kSecondaryColor,
+        onPrimary: AppColors.kOnprimaryColor,
+        onSurface: AppColors.kOnsecondaryColor,
+        onSecondary: AppColors.kOnsecondaryColor,
+        error: Colors.red,
+        secondaryVariant: AppColors.kAccentColor2,
+        onError: AppColors.kOnsecondaryColor,
+        primaryVariant: AppColors.kSubtitleTextColor,
       ),
       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
         // selectedItemColor:

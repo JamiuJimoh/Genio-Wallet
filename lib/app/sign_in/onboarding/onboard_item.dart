@@ -17,16 +17,28 @@ class OnboardItem extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        const Expanded(child: SizedBox()),
         Expanded(
           child: SvgPicture.asset(assetName),
         ),
-        const SizedBox(height: 10.0),
-        Text(
-          title,
-          style: Theme.of(context).textTheme.headline6,
+        const SizedBox(height: 70.0),
+        Expanded(
+          child: Column(
+            children: [
+              Text(
+                title,
+                style: Theme.of(context).textTheme.headline6,
+              ),
+              const SizedBox(height: 10.0),
+              Text(subtitle,
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context)
+                      .textTheme
+                      .subtitle1
+                      ?.copyWith(fontSize: 16)),
+            ],
+          ),
         ),
-        const SizedBox(height: 10.0),
-        Text(subtitle, style: Theme.of(context).textTheme.subtitle1),
       ],
     );
   }

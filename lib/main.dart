@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:genio_wallet/app/home/landing_page.dart';
+import 'package:genio_wallet/app/sign_in/email_sign_in/auth_provider.dart';
 import 'package:genio_wallet/app_theme.dart';
-
-import 'app/sign_in/sign_in_page.dart';
+import 'package:provider/provider.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,10 +15,14 @@ class MyApp extends StatelessWidget {
   final theme = AppTheme.light();
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: theme,
-      home: const SignInPage(),
+    return ChangeNotifierProvider<AuthProvider>(
+      create: (_) => AuthProvider(),
+      child: MaterialApp(
+        // supportedLocales: ,
+        title: 'Flutter Demo',
+        theme: theme,
+        home: const LandingPage(),
+      ),
     );
   }
 }

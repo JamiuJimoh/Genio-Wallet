@@ -6,6 +6,7 @@ import '../../shared_widgets/custom_container.dart';
 class SignInButton extends CustomContainer {
   SignInButton(
       {Key? key,
+      required bool isLoading,
       required String text,
       required VoidCallback onPressed,
       required BuildContext context})
@@ -25,13 +26,15 @@ class SignInButton extends CustomContainer {
               //   backgroundImage: AssetImage('assets/images/google-logo.png'),
               // ),
               FittedBox(
-                child: Text(
-                  text,
-                  style: Theme.of(context)
-                      .textTheme
-                      .headline6
-                      ?.copyWith(color: AppColors.kOnsecondaryColor),
-                ),
+                child: isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : Text(
+                        text,
+                        style: Theme.of(context)
+                            .textTheme
+                            .headline6
+                            ?.copyWith(color: AppColors.kOnsecondaryColor),
+                      ),
               ),
               const Icon(Icons.chevron_right, color: AppColors.kSecondaryColor),
             ],
