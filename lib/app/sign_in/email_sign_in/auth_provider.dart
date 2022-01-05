@@ -36,9 +36,6 @@ class AuthProvider with ChangeNotifier {
     this.dataUsage = false,
   });
 
-  var detail = '';
-  var errTitle = '';
-  var errMessage = '';
   var isLoading = false;
 
   @override
@@ -46,31 +43,33 @@ class AuthProvider with ChangeNotifier {
     return 'account type - $accountType, firstName - $firstName, lastName - $lastName, email - $email, password - $password, confirm password - $confirmPassword, country - $country, terms accepted, $termsAccepted, data usage - $dataUsage';
   }
 
-  Future<String> submit({
-    required Country? country,
-    required bool termsAccepted,
-    required bool dataUsage,
-    required AuthType authType,
-  }) async {
-    updateWith(
-        country: country, termsAccepted: termsAccepted, dataUsage: dataUsage);
+  // Future<String> submit({
+  //   required Country? country,
+  //   required bool termsAccepted,
+  //   required bool dataUsage,
+  //   required AuthType authType,
+  // }) async {
+  //   updateWith(
+  //       country: country, termsAccepted: termsAccepted, dataUsage: dataUsage);
 
-    const signUpURL = 'https://geniopay.com/api/v1.0/profiles/register/';
-    try {
-      if (authType == AuthType.signUp) {
-        return await _signUp(country!.countryCode);
-      } else {
-        return await _login();
-      }
-    } catch (e) {
-      isLoading = false;
-      notifyListeners();
-      rethrow;
-    }
-    // ;
-  }
+  //   const signUpURL = 'https://geniopay.com/api/v1.0/profiles/register/';
+  //   try {
+  //     if (authType == AuthType.signUp) {
+  //       return await _signUp(country!.countryCode);
+  //     } else {
+  //       return await _login();
+  //     }
+  //   } catch (e) {
+  //     isLoading = false;
+  //     notifyListeners();
+  //     rethrow;
+  //   }
+  //   // ;
+  // }
 
-  Future<String> _login() async {
+  Future<String> login(
+      {required String email, required String password}) async {
+    updateWith(email: email, password: password);
     try {
       isLoading = true;
       notifyListeners();
@@ -84,10 +83,14 @@ class AuthProvider with ChangeNotifier {
       final body = json.decode(response.body);
 
       print(body);
+      if (body['errors'] != null) {
+        throw HttpException(
+            title: body['message'], message: body['errors'][0]['message']);
+      }
 
       isLoading = false;
       notifyListeners();
-      return '';
+      return body['key'];
     } catch (e) {
       isLoading = false;
       notifyListeners();
@@ -95,7 +98,14 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
-  Future<String> _signUp(String countryCode) async {
+  Future<String> signUp({
+    required Country country,
+    required bool termsAccepted,
+    required bool dataUsage,
+    required AuthType authType,
+  }) async {
+    updateWith(
+        country: country, termsAccepted: termsAccepted, dataUsage: dataUsage);
     try {
       isLoading = true;
       notifyListeners();
@@ -109,20 +119,17 @@ class AuthProvider with ChangeNotifier {
             'last_name': lastName,
             'email': email,
             'password': password,
-            'country': countryCode,
+            'country': country.countryCode,
             'accept_terms': termsAccepted,
             'agreed_to_data_usage': dataUsage,
           }));
 
       final body = json.decode(response.body);
 
-      print(response.statusCode);
-      // print(body['errors'][0]['message']);
       if (body['errors'] != null) {
         throw HttpException(
             title: body['message'], message: body['errors'][0]['message']);
       }
-      detail = body['detail'];
 
       isLoading = false;
       notifyListeners();
@@ -130,7 +137,6 @@ class AuthProvider with ChangeNotifier {
     } catch (e) {
       isLoading = false;
       notifyListeners();
-      print(e);
       rethrow;
     }
   }

@@ -325,39 +325,68 @@ class _EmailSignInPageState extends State<EmailSignInPage> {
   }
 
   Future<void> _authenticate(AuthProvider auth) async {
-    if (_authType == AuthType.logIn) {}
-    _showSnackbar();
-    if (!_validateAndSaveForm() && _authType == AuthType.signUp) return;
-    if ((_country == null || !_termsAccepted || !_dataUsage) &&
-        _authType == AuthType.signUp) return;
-    try {
-      final response = await auth.submit(
-        authType: _authType,
-        country: _country,
-        termsAccepted: _termsAccepted,
-        dataUsage: _dataUsage,
-      );
-      final o = await CustomDialog.showAlertDialog(
-        context: context,
-        title: response,
-        content:
-            'Please check your email for the verification mail. Verify and complete your KYC registration',
-        defaultActionText: 'OK',
-      );
-      if (o == null) return;
-      if (o) _authType = AuthType.logIn;
-    } on HttpException catch (e) {
-      CustomDialog.showAlertDialog(
+    if (_authType == AuthType.logIn) {
+     
+      if (widget.emailValidator.isValid(_emailController.text)) {
+        try {
+          final response = await auth.login(
+            email: _emailController.text,
+            password: _passwordController.text,
+          );
+          final o = await CustomDialog.showAlertDialog(
+            context: context,
+            title: response,
+            content: response,
+            defaultActionText: 'OK',
+          );
+        } on HttpException catch (e) {
+          CustomDialog.showAlertDialog(
+              context: context,
+              title: e.title,
+              content: e.message,
+              defaultActionText: 'Cancel');
+        } catch (e) {
+          CustomDialog.showAlertDialog(
+              context: context,
+              title: 'An Error Occurred',
+              content: e.toString(),
+              defaultActionText: 'Cancel');
+        }
+      }
+    } else {
+      _showSnackbar();
+      if (!_validateAndSaveForm() && _authType == AuthType.signUp) return;
+      if ((_country == null || !_termsAccepted || !_dataUsage) &&
+          _authType == AuthType.signUp) return;
+      try {
+        final response = await auth.signUp(
+          authType: _authType,
+          country: _country!,
+          termsAccepted: _termsAccepted,
+          dataUsage: _dataUsage,
+        );
+        final o = await CustomDialog.showAlertDialog(
           context: context,
-          title: e.title,
-          content: e.message,
-          defaultActionText: 'Cancel');
-    } catch (e) {
-      CustomDialog.showAlertDialog(
-          context: context,
-          title: 'An Error Occurred',
-          content: e.toString(),
-          defaultActionText: 'Cancel');
+          title: response,
+          content:
+              'Please check your email for the verification mail. Verify and complete your KYC registration',
+          defaultActionText: 'OK',
+        );
+        if (o == null) return;
+        if (o) _authType = AuthType.logIn;
+      } on HttpException catch (e) {
+        CustomDialog.showAlertDialog(
+            context: context,
+            title: e.title,
+            content: e.message,
+            defaultActionText: 'Cancel');
+      } catch (e) {
+        CustomDialog.showAlertDialog(
+            context: context,
+            title: 'An Error Occurred',
+            content: e.toString(),
+            defaultActionText: 'Cancel');
+      }
     }
   }
 
